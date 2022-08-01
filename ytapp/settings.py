@@ -133,8 +133,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CELERY_BROKER_URL = "redis://redis:6379"
 CELERY_RESULT_BACKEND = "redis://redis:6379"
 CELERY_BEAT_SCHEDULE = {
-    "sample_task": {
-        "task": "ytapp.tasks.sample_task",
+    "fetchVideoStats": {
+        "task": "ytapp.tasks.fetchVideoStats",
         "schedule": crontab(minute="*/1"),
     },
 }
