@@ -7,7 +7,7 @@ services:
       - SYS_NICE
     restart: always
     ports:
-      - '3306:3306'
+      - "3306:3306"
     volumes:
       - ./data:/var/lib/mysql
     environment:
@@ -15,6 +15,30 @@ services:
       - MYSQL_USER=ytapp
       - MYSQL_PASSWORD=password
       - MYSQL_ROOT_PASSWORD=rootpassword
+  redis:
+    image: redis:alpine
+  celery:
+    build: .
+    command: celery -A ytapp worker -l info
+    volumes:
+      - .:/code
+    environment:
+      - DEBUG=1
+      - SECRET_KEY=mysuperscretkey
+      - DJANGO_ALLOWED_HOSTS=localhost 127.0.0.1 [::1]
+    depends_on:
+      - redis
+  celery-beat:
+    build: .
+    command: celery -A ytapp beat -l info
+    volumes:
+      - .:/code
+    environment:
+      - DEBUG=1
+      - SECRET_KEY=mysuperscretkey
+      - DJANGO_ALLOWED_HOSTS=localhost 127.0.0.1 [::1]
+    depends_on:
+      - redis
   web:
     build: .
     command: python manage.py runserver 0.0.0.0:8000
@@ -29,10 +53,15 @@ services:
       - DB_USER=ytapp
       - DB_PASSWORD=password
       - DB_NAME=ytapp
+      - DEBUG=1
+      - SECRET_KEY=mysuperscretkey
+      - DJANGO_ALLOWED_HOSTS=localhost 127.0.0.1 [::1]
     depends_on:
       - db
+      - redis
     links:
       - db
+      - redis
 volumes:
   db:
     driver: local
