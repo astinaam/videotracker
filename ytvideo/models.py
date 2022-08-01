@@ -12,6 +12,7 @@ class YTVideoStat(models.Model):
     dislikeCount = models.BigIntegerField(default=0)
     commentCount = models.BigIntegerField(default=0)
     videoPerformance = models.BigIntegerField(default=0)
+    createdAt = models.DateTimeField(auto_now_add=True, blank=True)
     updatedAt = models.DateTimeField(auto_now=True)
     
     def __str__(self) -> str:
