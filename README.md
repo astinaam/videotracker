@@ -13,6 +13,9 @@ docker-compose logs 'dashboard'
 ### Monitor the background task
 Visit http://localhost:5555
 
+### Add more workers to the background task
+docker-compose up -d --build --scale celery=3
+
 ### Super user
 ytapp
 ytapp@ytapp.com
