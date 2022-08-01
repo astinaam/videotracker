@@ -1,0 +1,2 @@
+### Setup
+docker-compose up

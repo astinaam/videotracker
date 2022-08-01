@@ -7,26 +7,26 @@ services:
       - SYS_NICE
     restart: always
     ports:
-      - '3333:3306'
+      - '3306:3306'
     volumes:
-      - db:/var/lib/mysql
-      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./data:/var/lib/mysql
     environment:
       - MYSQL_DATABASE=ytapp
-      - MYSQL_USER='root'
-      - MYSQL_PASSWORD='password'
-      - MYSQL_ROOT_PASSWORD='password'
+      - MYSQL_USER=ytapp
+      - MYSQL_PASSWORD=password
+      - MYSQL_ROOT_PASSWORD=rootpassword
   web:
     build: .
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
       - .:/code
+      - ./data:/var/lib/mysql
     ports:
       - "8000:8000"
     environment:
       - DB_HOST=db
       - DB_PORT=3306
-      - DB_USER=root
+      - DB_USER=ytapp
       - DB_PASSWORD=password
       - DB_NAME=ytapp
     depends_on:
