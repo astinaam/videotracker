@@ -1,4 +1,27 @@
 <div class="videostats">
+  <div class="videofilters">
+    <input
+      type="text"
+      class="filterinput"
+      id="tagFilter"
+      onkeyup="filterByTag()"
+      placeholder="Type tags to filter"
+    />
+    <input
+      type="button"
+      id="tagFilter"
+      class="btn filterinput"
+      onkeyup="sortByPerformance('desc')"
+      value="Sort By Performance (DESC)"
+    />
+    <input
+      type="button"
+      id="tagFilter"
+      class="btn filterinput"
+      onkeyup="sortByPerformance('asc')"
+      value="Sort By Performance (ASC)"
+    />
+  </div>
   <div class="videotable">
     <table>
       <thead>
@@ -22,8 +45,14 @@
     height: 100%;
     overflow-x: auto;
   }
+  .videofilters {
+    width: 100%;
+    overflow-x: auto;
+    padding: 10px 30px;
+    text-align: center;
+  }
   .videotable table {
-    padding: 30px;
+    padding: 10px 30px;
     margin: 0 auto;
     /* border: 1px solid #eee; */
   }
@@ -37,6 +66,12 @@
   tr:hover {
     /* Add a grey background color to the table header and on hover */
     background-color: #f1f1f1;
+  }
+  #tagFilter {
+    /* width: 300px; */
+    padding: 12px 5px 12px 5px;
+    border: 1px solid #ddd;
+    margin: 0 auto;
   }
 </style>
 
