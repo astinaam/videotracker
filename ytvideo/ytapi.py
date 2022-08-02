@@ -41,3 +41,41 @@ def getAllVideosOfChannel(channelId):
             
     return videos
 
+
+def getVideoList(ids):
+    youtube = build(YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION, 
+                    developerKey=DEVELOPER_KEY)
+    videos = []
+    nextPageToken = None
+    while True:
+        try:
+            searchResponse = youtube.videos().list(
+                part='id,snippet,statistics',
+                id=ids,
+                maxResults=50,
+                pageToken=nextPageToken
+            ).execute()
+            nextPageToken = searchResponse.get('nextPageToken', None)
+            videoItems = searchResponse.get('items', [])
+            for searchResult in videoItems:
+                video = {
+                    "channelId":searchResult['snippet']['channelId'],
+                    "videoId":searchResult['id'],
+                    "title":searchResult['snippet']['title'],
+                    "tags":searchResult['snippet']['tags'],
+                    "viewCount":searchResult['statistics']['viewCount'],
+                    "likeCount":searchResult['statistics']['likeCount'],
+                    "favoriteCount":searchResult['statistics']['favoriteCount'],
+                    "commentCount":searchResult['statistics']['commentCount'],
+                }
+                videos.append(video)
+            if not nextPageToken:
+                break
+        except HttpError as e:
+            print('An HTTP error %d occurred:\n%s' % (e.resp.status, e.content))
+            break
+        except Exception as e:
+            print(str(e))
+            break
+            
+    return videos
