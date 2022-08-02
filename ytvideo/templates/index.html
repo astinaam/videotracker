@@ -9,16 +9,14 @@
     />
     <input
       type="button"
-      id="tagFilter"
       class="btn filterinput"
-      onkeyup="sortByPerformance('desc')"
+      onclick="sortByPerformance('desc')"
       value="Sort By Performance (DESC)"
     />
     <input
       type="button"
-      id="tagFilter"
       class="btn filterinput"
-      onkeyup="sortByPerformance('asc')"
+      onclick="sortByPerformance('asc')"
       value="Sort By Performance (ASC)"
     />
   </div>
@@ -67,17 +65,28 @@
     /* Add a grey background color to the table header and on hover */
     background-color: #f1f1f1;
   }
-  #tagFilter {
+  .filterinput {
     /* width: 300px; */
     padding: 12px 5px 12px 5px;
     border: 1px solid #ddd;
     margin: 0 auto;
   }
+  .btn {
+    cursor: pointer;
+  }
 </style>
 
 <script>
-  async function getVideos() {
-    const url = "/api/videos";
+  async function getVideos(sortByPerformance = null, tag = null) {
+    let url = "/api/videos";
+    if (tag) {
+      url += "?tag=" + tag;
+    }
+    if (sortByPerformance) {
+      if (tag) url += "&";
+      else url += "?";
+      url += "sortByPerformance=" + sortByPerformance;
+    }
     const response = await fetch(url);
     const result = await response.json();
     return result;
@@ -120,8 +129,27 @@
   }
 
   window.onload = async function () {
-    console.log("loaded");
     const videos = await getVideos();
     updateTable(videos);
   };
+
+  async function filterByTag() {
+    const tagInput = document.getElementById("tagFilter").value;
+    if (tagInput.length == 0) {
+      const videos = await getVideos(null, null);
+      updateTable(videos);
+    } else if (tagInput.length < 3) return;
+    const videos = await getVideos(null, tagInput);
+    updateTable(videos);
+  }
+
+  async function sortByPerformance(order) {
+    let tagInput = document.getElementById("tagFilter").value;
+    if (tagInput.length == 0) {
+      tagInput = null;
+    }
+    console.log(order);
+    const videos = await getVideos(order, tagInput);
+    updateTable(videos);
+  }
 </script>
