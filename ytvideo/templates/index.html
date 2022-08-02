@@ -1,0 +1,90 @@
+<div class="videostats">
+  <div class="videotable">
+    <table>
+      <thead>
+        <th>Channel ID</th>
+        <th>Video ID</th>
+        <th>Video Title</th>
+        <th>Views</th>
+        <th>Likes</th>
+        <th>Favorites</th>
+        <th>Comments</th>
+        <th>Performance</th>
+      </thead>
+      <tbody id="videotablebody"></tbody>
+    </table>
+  </div>
+</div>
+
+<style>
+  .videotable {
+    width: 100%;
+    height: 100%;
+    overflow-x: auto;
+  }
+  .videotable table {
+    padding: 30px;
+    margin: 0 auto;
+    /* border: 1px solid #eee; */
+  }
+  th {
+    padding: 10px;
+    border: 1px solid #eee;
+  }
+  tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+  tr:hover {
+    /* Add a grey background color to the table header and on hover */
+    background-color: #f1f1f1;
+  }
+</style>
+
+<script>
+  async function getVideos() {
+    const url = "/api/videos";
+    const response = await fetch(url);
+    const result = await response.json();
+    return result;
+  }
+
+  function createTableColumn(tableRow, data) {
+    let column = document.createElement("td");
+    column.innerHTML = data;
+
+    tableRow.appendChild(column);
+  }
+
+  function createTableRow(tableBody, video) {
+    if (!video) return;
+
+    let row = document.createElement("tr");
+
+    createTableColumn(row, video.channelId);
+    createTableColumn(row, video.videoId);
+    createTableColumn(row, video.title);
+    createTableColumn(row, video.viewCount);
+    createTableColumn(row, video.likeCount);
+    createTableColumn(row, video.favoriteCount);
+    createTableColumn(row, video.commentCount);
+    createTableColumn(row, video.videoPerformance);
+
+    tableBody.appendChild(row);
+  }
+
+  function updateTable(videos) {
+    let tableBody = document.getElementById("videotablebody");
+    tableBody.innerHTML = "";
+
+    // Update the table
+    videos.forEach((video) => {
+      createTableRow(tableBody, video);
+    });
+  }
+
+  window.onload = async function () {
+    console.log("loaded");
+    const videos = await getVideos();
+    updateTable(videos);
+  };
+</script>
