@@ -6,7 +6,7 @@ from .models import YTVideoStat, YTVideoTag
 class OrderAdmin(admin.ModelAdmin):
     list_display = (
         "id", "channelId", "videoId", "viewCount", 
-        "likeCount", "dislikeCount", "commentCount",
+        "likeCount", "favoriteCount", "commentCount",
         "videoPerformance", "updatedAt"
     )
 

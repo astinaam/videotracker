@@ -9,7 +9,7 @@ class YTVideoStat(models.Model):
     title = models.TextField(default="")
     viewCount = models.BigIntegerField(default=0)
     likeCount = models.BigIntegerField(default=0)
-    dislikeCount = models.BigIntegerField(default=0)
+    favoriteCount = models.BigIntegerField(default=0)
     commentCount = models.BigIntegerField(default=0)
     videoPerformance = models.BigIntegerField(default=0)
     createdAt = models.DateTimeField(auto_now_add=True, blank=True)
