@@ -18,8 +18,8 @@ class YTVideoStatList(viewsets.ModelViewSet):
         tag = self.request.query_params.get('tag')
         if tag is not None:
             matchedTags = YTVideoTag.objects.filter(tag__icontains=tag).values_list('videoId', flat=True)
-            print(matchedTags)
-        
+            queryset = queryset.filter(videoId__in=list(matchedTags))
+
         sortByPerformance = self.request.query_params.get('sortByPerformance')
         if sortByPerformance is not None:
             order = "-videoPerformance"
