@@ -1,3 +1,4 @@
+from time import sleep
 from django.conf import settings
 import os
 import environ
@@ -29,18 +30,23 @@ def getAllVideosOfChannel(channelId):
             for searchResult in searchResponse.get('items', []):
                 if searchResult['id']['kind'] == 'youtube#video':
                     videos.append(searchResult['id']['videoId'])
-            break
             if not nextPageToken:
                 break
+            # Delay between requests
+            sleep(.150)
         except HttpError as e:
             print('An HTTP error %d occurred:\n%s' % (e.resp.status, e.content))
             break
         except Exception as e:
-            print(str(e))
+            print("Exception occured when searching videos: %s" % str(e))
             break
             
     return videos
 
+def _getVideoAttribute(obj, key, defaultValue):
+    if key in obj:
+        return obj[key]
+    return defaultValue
 
 def getVideoList(ids):
     youtube = build(YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION, 
@@ -58,24 +64,27 @@ def getVideoList(ids):
             nextPageToken = searchResponse.get('nextPageToken', None)
             videoItems = searchResponse.get('items', [])
             for searchResult in videoItems:
+                # print(searchResult)
                 video = {
-                    "channelId":searchResult['snippet']['channelId'],
-                    "videoId":searchResult['id'],
-                    "title":searchResult['snippet']['title'],
-                    "tags":searchResult['snippet']['tags'],
-                    "viewCount":searchResult['statistics']['viewCount'],
-                    "likeCount":searchResult['statistics']['likeCount'],
-                    "favoriteCount":searchResult['statistics']['favoriteCount'],
-                    "commentCount":searchResult['statistics']['commentCount'],
+                    "channelId": searchResult['snippet']['channelId'],
+                    "videoId": searchResult['id'],
+                    "title": _getVideoAttribute(searchResult['snippet'], 'title', 'Untitled'),
+                    "tags": _getVideoAttribute(searchResult['snippet'], 'tags', []),
+                    "viewCount": _getVideoAttribute(searchResult['statistics'], 'viewCount', 0),
+                    "likeCount": _getVideoAttribute(searchResult['statistics'], 'likeCount', 0),
+                    "favoriteCount": _getVideoAttribute(searchResult['statistics'], 'favoriteCount', 0),
+                    "commentCount": _getVideoAttribute(searchResult['statistics'], 'commentCount', 0),
                 }
                 videos.append(video)
             if not nextPageToken:
                 break
+            # Delay between requests
+            sleep(.150)
         except HttpError as e:
             print('An HTTP error %d occurred:\n%s' % (e.resp.status, e.content))
             break
         except Exception as e:
-            print(str(e))
+            print("Exception occured when fetcing video list: %s" % str(e))
             break
             
     return videos

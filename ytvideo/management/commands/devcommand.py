@@ -44,7 +44,7 @@ class Command(BaseCommand):
             )
             print(_stat)
         except Exception as e:
-            print(str(e))
+            print("Exception occured when updating stats: %s" % str(e))
     
     def calculateMedianViews(self, channelId):
         channelStat = YTVideoStat.objects.filter(channelId__exact=channelId)
@@ -60,7 +60,7 @@ class Command(BaseCommand):
         firstHourVideoList = YTVideoStat.objects.filter(
             channelId=channelId, createdAt__gte=Now()-timedelta(hours=1, minutes=10)
         ).order_by('-createdAt').all()
-        print("Found %d videos to update first hour performance" % (len(firstHourVideoList)))
+        print("Found %d videos to update with first hour performance" % (len(firstHourVideoList)))
         if len(firstHourVideoList):
             medianViews = self.calculateMedianViews(channelId=channelId)
             # use the median value to update video performance value
@@ -87,10 +87,10 @@ class Command(BaseCommand):
             
             # Check and update video stats for each videos
             print("Updating video stats of %d videos..." % (len(videoIds)))
-            for i in range(0, len(videoIds), 10):
-                remLen = len(videoIds) - i
-                maxLen = min(i+10, i+remLen)
-                ids = ",".join(videoIds[i:maxLen])
+            VIDEOS_PER_REQUEST = 50
+            for i in range(0, len(videoIds), VIDEOS_PER_REQUEST):
+                currLen = min(i+VIDEOS_PER_REQUEST, len(videoIds))
+                ids = ",".join(videoIds[i:currLen])
                 videos = yt.getVideoList(ids)
                 tagObjects = []
                 for j in range(len(videos)):
@@ -102,7 +102,7 @@ class Command(BaseCommand):
                                 YTVideoTag(channelId=channelId, videoId=videos[j]["videoId"], tag=tag)
                             )
                 if len(tagObjects):
-                    print("Inserting tags of %d videos..." % (len(tagObjects)))
+                    print("Inserting %d tags" % (len(tagObjects)))
                     YTVideoTag.objects.bulk_create(tagObjects)
 
             # Update performace measure based on first hour views
