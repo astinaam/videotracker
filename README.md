@@ -1,3 +1,5 @@
+Periodically fetches youtube video stats.
+
 ### Demo
 TBA
 ### Setup environment variables
