@@ -1,9 +1,11 @@
-
+### Demo
+TBA
 ### Setup environment variables
-
+TBA
 
 ### Project setup
 docker-compose up -d --build
+docker-compose exec web python manage.py migrate
 docker-compose exec web python manage.py createsuperuser
 
 ### See logs
@@ -19,8 +21,3 @@ Visit http://localhost:5555
 
 ### Add more workers to the background task
 docker-compose up -d --build --scale celery=3
-
-### Super user
-ytapp
-ytapp@ytapp.com
-123456

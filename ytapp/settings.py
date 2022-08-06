@@ -136,6 +136,6 @@ CELERY_RESULT_BACKEND = "redis://redis:6379"
 CELERY_BEAT_SCHEDULE = {
     "fetchVideoStats": {
         "task": "ytapp.tasks.fetchVideoStats",
-        "schedule": crontab(minute="*/1"),
+        "schedule": crontab(hour="*/1"),
     },
 }
